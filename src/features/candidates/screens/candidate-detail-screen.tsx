@@ -50,7 +50,7 @@ export const CandidateDetailScreen = () => {
 
   return (
     <div className="space-y-6">
-      <Link to="/candidates" className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
+      <Link to="/app/candidates" className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
         <ArrowLeft size={14} /> All candidates
       </Link>
 
@@ -128,7 +128,7 @@ export const CandidateDetailScreen = () => {
                 )}
                 {row.session ? (
                   <Link
-                    to={`/sessions/${row.session.id}`}
+                    to={`/app/sessions/${row.session.id}`}
                     className="text-ink-soft hover:text-brand-700 p-1 rounded hover:bg-surface-sunken"
                   >
                     <ChevronRight size={18} />

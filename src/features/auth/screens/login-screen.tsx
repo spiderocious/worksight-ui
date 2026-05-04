@@ -19,7 +19,7 @@ export const LoginScreen = () => {
     try {
       const data = await login.mutateAsync({ email, password });
       signIn(data.token, data.reviewer);
-      navigate('/candidates');
+      navigate('/app/candidates');
     } catch (err) {
       push(err instanceof Error ? err.message : 'Sign-in failed', 'error');
     }

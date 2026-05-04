@@ -21,7 +21,7 @@ export const SignupScreen = () => {
       const data = await signup.mutateAsync({ name, email, password });
       signIn(data.token, data.reviewer);
       push('Welcome to WorkSight', 'success');
-      navigate('/candidates');
+      navigate('/app/candidates');
     } catch (err) {
       push(err instanceof Error ? err.message : 'Sign-up failed', 'error');
     }

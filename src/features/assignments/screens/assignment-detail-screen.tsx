@@ -42,7 +42,7 @@ export const AssignmentDetailScreen = () => {
     try {
       await remove.mutateAsync(id);
       push('Assignment deleted', 'success');
-      navigate('/assignments');
+      navigate('/app/assignments');
     } catch (err) {
       push(err instanceof Error ? err.message : 'Could not delete', 'error');
     }
@@ -50,7 +50,7 @@ export const AssignmentDetailScreen = () => {
 
   return (
     <div className="space-y-6">
-      <Link to="/assignments" className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
+      <Link to="/app/assignments" className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
         <ArrowLeft size={14} /> All assignments
       </Link>
 
@@ -107,7 +107,7 @@ export const AssignmentDetailScreen = () => {
                 <span className="text-xs text-ink-soft">{formatDate(i.createdAt)}</span>
                 {i.candidate && (
                   <Link
-                    to={`/candidates/${i.candidate.id}`}
+                    to={`/app/candidates/${i.candidate.id}`}
                     className="text-ink-soft hover:text-brand-700 p-1 rounded hover:bg-surface-sunken"
                   >
                     <ChevronRight size={18} />

@@ -13,6 +13,8 @@ import { AssignmentDetailScreen } from '@features/assignments/screens/assignment
 import { InstancesScreen } from '@features/assignments/screens/instances-screen';
 import { SessionDetailScreen } from '@features/sessions/screens/session-detail-screen';
 import { AccountScreen } from '@features/auth/screens/account-screen';
+import { SettingsScreen } from '@features/settings/screens/settings-screen';
+import { LandingScreen } from '@features/landing/landing-screen';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,7 +36,7 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
 const RedirectIfAuthed = ({ children }: { children: React.ReactNode }) => {
   const { reviewer, loading } = useAuth();
   if (loading) return <PageLoader />;
-  if (reviewer) return <Navigate to="/candidates" replace />;
+  if (reviewer) return <Navigate to="/app/candidates" replace />;
   return <>{children}</>;
 };
 
@@ -44,6 +46,10 @@ export const App = () => (
       <AuthProvider>
         <ToastProvider>
           <Routes>
+            {/* Public landing */}
+            <Route path="/" element={<LandingScreen />} />
+
+            {/* Auth */}
             <Route
               path="/login"
               element={
@@ -60,23 +66,27 @@ export const App = () => (
                 </RedirectIfAuthed>
               }
             />
+
+            {/* App shell — everything signed-in lives under /app */}
             <Route
-              path="/"
+              path="/app"
               element={
                 <RequireAuth>
                   <AppShell />
                 </RequireAuth>
               }
             >
-              <Route index element={<Navigate to="/candidates" replace />} />
+              <Route index element={<Navigate to="candidates" replace />} />
               <Route path="candidates" element={<CandidatesScreen />} />
               <Route path="candidates/:id" element={<CandidateDetailScreen />} />
               <Route path="assignments" element={<AssignmentsScreen />} />
               <Route path="assignments/:id" element={<AssignmentDetailScreen />} />
               <Route path="instances" element={<InstancesScreen />} />
               <Route path="sessions/:id" element={<SessionDetailScreen />} />
+              <Route path="settings" element={<SettingsScreen />} />
               <Route path="account" element={<AccountScreen />} />
             </Route>
+
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </ToastProvider>

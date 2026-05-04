@@ -42,7 +42,7 @@ export const CandidatesScreen = () => {
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <Link
-                    to={`/candidates/${c.id}`}
+                    to={`/app/candidates/${c.id}`}
                     className="text-base font-semibold text-ink hover:text-brand-800 inline-flex items-center gap-1.5"
                   >
                     {c.name}

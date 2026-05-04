@@ -30,7 +30,7 @@ export const SessionDetailScreen = () => {
 
   return (
     <div className="space-y-6">
-      <Link to="/instances" className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
+      <Link to="/app/instances" className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
         <ArrowLeft size={14} /> All sessions
       </Link>
 

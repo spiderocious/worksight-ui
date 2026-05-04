@@ -49,7 +49,7 @@ export const InstancesScreen = () => {
             {data.map((i) => (
               <Link
                 key={i.id}
-                to={`/candidates/${i.candidate?.id ?? ''}`}
+                to={`/app/candidates/${i.candidate?.id ?? ''}`}
                 className="flex items-center gap-4 px-5 py-4 hover:bg-surface-subtle transition"
               >
                 <div className="flex-1 min-w-0">

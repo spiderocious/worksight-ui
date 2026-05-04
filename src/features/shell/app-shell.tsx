@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { Logo } from '@shared/ui';
-import { Users, ClipboardCheck, ListChecks, Settings, LogOut } from '@shared/ui/icons';
+import { Users, ClipboardCheck, ListChecks, Settings, LogOut, ShieldCheck } from '@shared/ui/icons';
 import { useAuth } from '@shared/hooks/use-auth';
 
 const NavItem = ({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) => (
@@ -37,10 +37,11 @@ export const AppShell = () => {
           <Logo />
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
-          <NavItem to="/candidates" icon={<Users size={16} />} label="Candidates" />
-          <NavItem to="/assignments" icon={<ClipboardCheck size={16} />} label="Assignments" />
-          <NavItem to="/instances" icon={<ListChecks size={16} />} label="Sessions" />
-          <NavItem to="/account" icon={<Settings size={16} />} label="Account" />
+          <NavItem to="/app/candidates" icon={<Users size={16} />} label="Candidates" />
+          <NavItem to="/app/assignments" icon={<ClipboardCheck size={16} />} label="Assignments" />
+          <NavItem to="/app/instances" icon={<ListChecks size={16} />} label="Sessions" />
+          <NavItem to="/app/settings" icon={<ShieldCheck size={16} />} label="Settings" />
+          <NavItem to="/app/account" icon={<Settings size={16} />} label="Account" />
         </nav>
         <div className="px-3 py-4 border-t border-line">
           <div className="px-3 py-2 mb-2">

@@ -42,7 +42,7 @@ export const AssignmentsScreen = () => {
         <div className="space-y-3">
           {data.map((a) => (
             <Link
-              to={`/assignments/${a.id}`}
+              to={`/app/assignments/${a.id}`}
               key={a.id}
               className="block ws-card p-5 hover:shadow-lift transition-shadow"
             >
@@ -74,7 +74,7 @@ export const AssignmentsScreen = () => {
               const created = await create.mutateAsync(body);
               setOpen(false);
               push('Assignment created', 'success');
-              navigate(`/assignments/${created.id}`);
+              navigate(`/app/assignments/${created.id}`);
             } catch (err) {
               push(err instanceof Error ? err.message : 'Could not create', 'error');
             }
