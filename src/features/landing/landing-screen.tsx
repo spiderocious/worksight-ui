@@ -12,26 +12,11 @@ import {
   ShieldAlert,
   CheckCircle2,
   X,
-  Copy,
-  Check,
 } from '@shared/ui/icons';
-import { copyToClipboard } from '@shared/utils/copy-to-clipboard';
-import { useState } from 'react';
-import { useDownloads } from './api/use-downloads';
 import { useBlocklist } from './api/use-blocklist';
 
 export const LandingScreen = () => {
-  const { data: downloads } = useDownloads();
   const { data: blocklist } = useBlocklist();
-  const [copied, setCopied] = useState(false);
-
-  const onCopyBrew = async () => {
-    if (!downloads?.mac.brewInstall) return;
-    if (await copyToClipboard(downloads.mac.brewInstall)) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-surface-subtle">
@@ -70,33 +55,21 @@ export const LandingScreen = () => {
             a clear evidence trail — so you can score the candidate, not the model.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-            {downloads?.mac.url && (
-              <a href={downloads.mac.url} target="_blank" rel="noreferrer">
-                <Button size="lg" iconLeft={<Hourglass size={16} />}>
-                  Download for Mac
-                  {downloads.mac.version && (
-                    <span className="ml-2 text-xs opacity-70 font-mono">v{downloads.mac.version}</span>
-                  )}
-                </Button>
-              </a>
-            )}
             <Link to="/signup">
-              <Button size="lg" variant="secondary" iconRight={<ArrowRight size={14} />}>
+              <Button size="lg" iconRight={<ArrowRight size={14} />}>
                 Sign up as a reviewer
+              </Button>
+            </Link>
+            <Link to="/login">
+              <Button size="lg" variant="secondary">
+                Sign in
               </Button>
             </Link>
           </div>
 
-          {downloads?.mac.brewInstall && (
-            <button
-              type="button"
-              onClick={onCopyBrew}
-              className="mt-6 inline-flex items-center gap-2 font-mono text-xs text-ink-soft hover:text-ink bg-surface border border-line rounded-md px-3 py-1.5 transition"
-            >
-              <span>$ {downloads.mac.brewInstall}</span>
-              {copied ? <Check size={12} className="text-brand-700" /> : <Copy size={12} />}
-            </button>
-          )}
+          <p className="mt-6 text-xs text-ink-soft">
+            Are you a candidate? You'll get an invite link from your reviewer.
+          </p>
         </div>
       </section>
 
@@ -232,13 +205,6 @@ export const LandingScreen = () => {
                 Create reviewer account
               </Button>
             </Link>
-            {downloads?.mac.url && (
-              <a href={downloads.mac.url} target="_blank" rel="noreferrer">
-                <Button size="lg" variant="soft">
-                  Get the candidate app
-                </Button>
-              </a>
-            )}
           </div>
         </div>
       </section>

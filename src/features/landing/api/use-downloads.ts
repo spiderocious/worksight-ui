@@ -3,10 +3,11 @@ import { api } from '@shared/services/api-client';
 
 export interface DownloadsPayload {
   mac: {
-    url: string;
-    version: string;
+    installCommand: string;
+    installScriptUrl: string;
+    releasesUrl: string;
+    latestVersion: string;
     releasedAt: string;
-    brewInstall: string;
   };
 }
 
