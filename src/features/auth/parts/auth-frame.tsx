@@ -15,8 +15,10 @@ export const AuthFrame = ({ title, subtitle, children, footer }: Props) => (
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-brand-700 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-brand-500 rounded-full blur-3xl opacity-50" />
       </div>
-      <div className="relative">
-        <Logo size={32} />
+      <div className="relative bg-white w-max p-1">
+        <span className="font-display text-[1.05rem] font-medium tracking-tight text-ink">
+        Work<span className="text-brand-700">Sight</span>
+      </span>
       </div>
       <div className="relative max-w-md">
         <p className="font-display text-3xl leading-tight tracking-tight text-brand-50">

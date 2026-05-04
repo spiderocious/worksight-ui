@@ -200,7 +200,7 @@ export const LandingScreen = () => {
         <Eyebrow>Equally important</Eyebrow>
         <H2>What WorkSight deliberately does not do.</H2>
         <p className="text-base text-ink-muted max-w-2xl">
-          We're a warden, not a panopticon. The list below is non-negotiable.
+          We're a warden. The list below is non-negotiable.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-8">
           <NotDoing label="No webcam or microphone access" />
@@ -219,7 +219,7 @@ export const LandingScreen = () => {
           <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-brand-500 rounded-full blur-3xl opacity-50" />
         </div>
         <div className="relative max-w-4xl mx-auto px-6 lg:px-8 py-20 text-center">
-          <h2 className="font-display text-3xl lg:text-4xl tracking-tight">
+          <h2 className="font-display text-3xl lg:text-4xl tracking-tight text-white">
             Ready to score real work?
           </h2>
           <p className="mt-4 text-brand-200 max-w-xl mx-auto">

@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const Logo = ({ size = 28, withText = true, className }: Props) => (
-  <span className={clsx('inline-flex items-center gap-2.5', className)}>
+  <span className={clsx('flex items-center gap-1 justify-center', className)}>
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
       <rect x="2" y="2" width="28" height="28" rx="8" fill="#14532D" />
       <path
