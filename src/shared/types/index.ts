@@ -1,5 +1,5 @@
 export type SubmissionType = 'link' | 'text' | 'both';
-export type InstanceStatus = 'pending' | 'in_progress' | 'submitted' | 'scored';
+export type InstanceStatus = 'pending' | 'in_progress' | 'submitted' | 'scored' | 'closed';
 export type SessionStatus = 'in_progress' | 'submitted';
 
 export interface Reviewer {
@@ -30,6 +30,9 @@ export interface Assignment {
   brief: string;
   submissionType: SubmissionType;
   durationMinutes: number;
+  hideUntilStart: boolean;
+  mainTitle?: string | null;
+  mainBrief?: string | null;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -75,10 +78,23 @@ export interface Session {
   updatedAt: string;
 }
 
+export interface BlockedAttempt {
+  id: string;
+  sessionId: string;
+  candidateId: string;
+  reviewerId: string;
+  domain: string;
+  attemptedAt: string;
+  screenshotKey?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface SessionDetail extends Session {
   assignment: Assignment | null;
   instance: AssignmentInstance | null;
   candidate?: { id: string; name: string; email: string } | null;
+  blockedAttempts: BlockedAttempt[];
 }
 
 export interface Score {

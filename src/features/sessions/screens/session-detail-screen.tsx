@@ -13,6 +13,7 @@ import { formatDate, formatDuration } from '@shared/utils/format-date';
 import { useSession } from '../api/use-sessions-api';
 import { ScreenshotScrubber } from '../parts/screenshot-scrubber';
 import { ScorePanel } from '../parts/score-panel';
+import { BlockedAttemptsList } from '../parts/blocked-attempts-list';
 
 export const SessionDetailScreen = () => {
   const { id } = useParams<{ id: string }>();
@@ -67,6 +68,25 @@ export const SessionDetailScreen = () => {
               right={<Badge tone="neutral" icon={<Camera size={11} />}>{data.screenshots.length}</Badge>}
             />
             <ScreenshotScrubber screenshots={data.screenshots} />
+          </Card>
+
+          <Card>
+            <CardHeader
+              title="Blocked-domain attempts"
+              subtitle={
+                data.blockedAttempts.length === 0
+                  ? "No connections to blocked sites were attempted."
+                  : `${data.blockedAttempts.length} attempt${data.blockedAttempts.length === 1 ? '' : 's'} during this session.`
+              }
+              right={
+                data.blockedAttempts.length > 0 ? (
+                  <Badge tone="rose" icon={<ShieldAlert size={11} />}>
+                    {data.blockedAttempts.length}
+                  </Badge>
+                ) : undefined
+              }
+            />
+            <BlockedAttemptsList attempts={data.blockedAttempts} />
           </Card>
 
           <Card>

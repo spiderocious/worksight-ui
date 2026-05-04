@@ -17,6 +17,7 @@ import {
   useRegenerateCode,
 } from '../api/use-candidates-api';
 import { AccessCodeDisplay } from '../parts/access-code-display';
+import { InviteLinkDisplay } from '../parts/invite-link-display';
 
 export const CandidateDetailScreen = () => {
   const { id } = useParams<{ id: string }>();
@@ -87,6 +88,16 @@ export const CandidateDetailScreen = () => {
           }
         />
         <AccessCodeDisplay code={candidate.accessCode} size="lg" />
+
+        <div className="mt-6 pt-6 border-t border-line">
+          <p className="text-xs uppercase tracking-wider text-ink-soft mb-2">Invite link</p>
+          <p className="text-xs text-ink-muted mb-3 leading-relaxed">
+            Send the candidate this URL — it's a personalized landing page with the
+            install command and their access code, in one place. Regenerating the
+            access code invalidates this link.
+          </p>
+          <InviteLinkDisplay accessCode={candidate.accessCode} />
+        </div>
       </Card>
 
       <Card>

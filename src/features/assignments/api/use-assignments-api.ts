@@ -37,6 +37,9 @@ interface CreateBody {
   brief: string;
   submissionType: SubmissionType;
   durationMinutes: number;
+  hideUntilStart: boolean;
+  mainTitle: string | null;
+  mainBrief: string | null;
 }
 
 export const useCreateAssignment = () => {

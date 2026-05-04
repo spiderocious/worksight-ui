@@ -14,6 +14,10 @@ import {
   X,
 } from '@shared/ui/icons';
 import { useBlocklist } from './api/use-blocklist';
+import { StepCreateMock } from './parts/step-create-mock';
+import { StepCandidateMock } from './parts/step-candidate-mock';
+import { StepScrubMock } from './parts/step-scrub-mock';
+import clsx from 'clsx';
 
 export const LandingScreen = () => {
   const { data: blocklist } = useBlocklist();
@@ -89,22 +93,46 @@ export const LandingScreen = () => {
       <Section background="subtle">
         <Eyebrow>How it works</Eyebrow>
         <H2>Three steps. No new IDE.</H2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
-          <Step
+
+        <div className="mt-12 space-y-12 lg:space-y-16">
+          <StaggeredStep
+            offsetEven={false}
             number={1}
             title="Create the assessment"
-            body="In the dashboard, write a brief and set a duration. WorkSight generates a 10-character access code for the candidate."
+            body="In the dashboard, write a brief, set a duration, and assign it to a candidate. WorkSight generates a 10-character access code and a personalized invite link they can use to install + sign in."
+            mock={<StepCreateMock />}
           />
-          <Step
+          <StaggeredStep
+            offsetEven
             number={2}
             title="Candidate runs the desktop app"
-            body="They sign in with the code, read the rules, and start the timer. WorkSight blocks AI tools at the OS network level and captures random screenshots in the background."
+            body="They paste the code, read the rules, start the timer. WorkSight blocks AI tools at the OS network level and captures random screenshots in the background. The macOS menu bar shows the live countdown."
+            mock={<StepCandidateMock />}
           />
-          <Step
+          <StaggeredStep
+            offsetEven={false}
             number={3}
             title="You scrub the evidence"
-            body="When they submit, you see the timeline of screenshots, the metadata, and any abnormal-termination flags. Score with confidence."
+            body="When they submit, you see the timeline of screenshots, the metadata, blocked-domain attempts, and any abnormal-termination flags. Score with confidence."
+            mock={<StepScrubMock />}
           />
+        </div>
+      </Section>
+
+      {/* For candidates — soft callout, no CTA */}
+      <Section>
+        <div className="ws-card max-w-2xl mx-auto p-8 text-center bg-brand-50/40 border-brand-200/60">
+          <p className="text-xs uppercase tracking-[0.18em] text-brand-700 font-medium mb-3">
+            Are you a candidate?
+          </p>
+          <p className="text-base text-ink leading-relaxed">
+            WorkSight is invite-only for candidates. Your reviewer will send you a
+            personalized link with everything you need to install, sign in, and start
+            your session.
+          </p>
+          <p className="text-sm text-ink-muted leading-relaxed mt-3">
+            No account to create. No app store search. Just one link from your reviewer.
+          </p>
         </div>
       </Section>
 
@@ -241,13 +269,33 @@ const H2 = ({ children }: { children: React.ReactNode }) => (
   </h2>
 );
 
-const Step = ({ number, title, body }: { number: number; title: string; body: string }) => (
-  <div className="ws-card p-6">
-    <div className="w-9 h-9 rounded-lg bg-brand-50 text-brand-800 flex items-center justify-center font-display text-lg font-medium">
-      {number}
+const StaggeredStep = ({
+  number,
+  title,
+  body,
+  mock,
+  offsetEven,
+}: {
+  number: number;
+  title: string;
+  body: string;
+  mock: React.ReactNode;
+  offsetEven: boolean;
+}) => (
+  <div
+    className={clsx(
+      'grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center',
+      offsetEven && 'lg:translate-x-12'
+    )}
+  >
+    <div className={clsx('order-2', offsetEven ? 'lg:order-2' : 'lg:order-1')}>
+      <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-brand-50 text-brand-800 font-display text-lg font-medium mb-4">
+        {number}
+      </div>
+      <h3 className="text-xl font-semibold text-ink">{title}</h3>
+      <p className="mt-2 text-sm text-ink-muted leading-relaxed max-w-md">{body}</p>
     </div>
-    <h3 className="mt-4 text-lg font-semibold text-ink">{title}</h3>
-    <p className="mt-2 text-sm text-ink-muted leading-relaxed">{body}</p>
+    <div className={clsx('order-1', offsetEven ? 'lg:order-1' : 'lg:order-2')}>{mock}</div>
   </div>
 );
 

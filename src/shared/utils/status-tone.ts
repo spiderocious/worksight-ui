@@ -10,6 +10,8 @@ export const instanceStatusTone = (s: InstanceStatus) => {
       return 'sky' as const;
     case 'scored':
       return 'success' as const;
+    case 'closed':
+      return 'rose' as const;
   }
 };
 

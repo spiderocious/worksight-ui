@@ -33,3 +33,15 @@
     @apply text-brand-700 hover:text-brand-800 underline-offset-4 hover:underline;
   }
 }
+
+@layer utilities {
+  /* Used by the landing-page screenshot scrubber mock to animate the thumb
+     across the track. Held briefly at each end for legibility. */
+  @keyframes ws-scrub {
+    0%   { left: 8%; }
+    45%  { left: 92%; }
+    50%  { left: 92%; }
+    95%  { left: 8%; }
+    100% { left: 8%; }
+  }
+}
