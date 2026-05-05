@@ -5,7 +5,7 @@ import { Copy, Check, ShieldAlert, KeyRound } from '@shared/ui/icons';
 import { copyToClipboard } from '@shared/utils/copy-to-clipboard';
 import { useToast } from '@shared/hooks/use-toast';
 import { useAdminBootstrap, type AdminBootstrapResult } from '../api/use-admin-api';
-import { AdminApiError } from '../api/admin-api';
+import { ApiError } from '../api/admin-api';
 
 /**
  * One-shot admin setup. Calls POST /admin/setup; if 409 (already set up),
@@ -28,7 +28,7 @@ export const AdminSetupScreen = () => {
       const result = await bootstrap.mutateAsync();
       setCreds(result);
     } catch (err) {
-      if (err instanceof AdminApiError && err.status === 409) {
+      if (err instanceof ApiError && err.status === 409) {
         setAlreadySetup(true);
         return;
       }
