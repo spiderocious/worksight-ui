@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Badge, Button, Card, EmptyState, Modal, PageLoader } from '@shared/ui';
+import { Badge, Button, Card, EmptyState, MarkdownBody, Modal, PageLoader } from '@shared/ui';
 import { Plus, ClipboardCheck, Clock, ChevronRight, Send } from '@shared/ui/icons';
 import { useToast } from '@shared/hooks/use-toast';
 import { useAssignments, useCreateAssignment } from '../api/use-assignments-api';
@@ -62,10 +62,13 @@ export const AssignmentsScreen = () => {
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   <h3 className="text-base font-semibold text-ink truncate">{a.title}</h3>
-                  <p className="text-sm text-ink-muted line-clamp-2 mt-1">{a.brief}</p>
+                
+                  <p className="text-sm text-ink-muted line-clamp-1 mt-1">
+                      <MarkdownBody>{a.brief}</MarkdownBody>
+                  </p>
                   <div className="flex items-center gap-3 mt-3">
                     <Badge tone="brand">
-                      <Clock size={11} /> {a.durationMinutes} min
+                      <Clock size={11} /> {a.durationMinutes} minutes
                     </Badge>
                     <Badge tone="neutral">{a.submissionType}</Badge>
                   </div>
