@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Badge, Button, Card, CardHeader, EmptyState, Modal, PageLoader } from '@shared/ui';
+import { Badge, Button, Card, CardHeader, EmptyState, MarkdownBody, Modal, PageLoader } from '@shared/ui';
 import {
   ArrowLeft,
   ChevronRight,
@@ -79,9 +79,21 @@ export const AssignmentDetailScreen = () => {
       </header>
 
       <Card>
-        <CardHeader title="Brief" />
-        <div className="text-sm whitespace-pre-wrap text-ink leading-relaxed">{data.brief}</div>
+        <CardHeader
+          title={data.hideUntilStart ? 'Public brief (what candidates see pre-start)' : 'Brief'}
+        />
+        <MarkdownBody>{data.brief}</MarkdownBody>
       </Card>
+
+      {data.hideUntilStart && data.mainBrief && (
+        <Card>
+          <CardHeader
+            title={data.mainTitle ?? 'Real test'}
+            subtitle="Revealed only after the candidate clicks Start."
+          />
+          <MarkdownBody>{data.mainBrief}</MarkdownBody>
+        </Card>
+      )}
 
       <Card>
         <CardHeader title="Assigned to" subtitle="Every candidate this has been sent to." />

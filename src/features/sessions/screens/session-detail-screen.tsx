@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { Badge, Card, CardHeader, PageLoader } from '@shared/ui';
+import { Badge, Card, CardHeader, MarkdownBody, PageLoader } from '@shared/ui';
 import {
   ArrowLeft,
   ShieldCheck,
@@ -121,8 +121,10 @@ export const SessionDetailScreen = () => {
           <ScorePanel sessionId={data.id} />
           <Card>
             <CardHeader title="Assignment brief" />
-            <div className="text-sm whitespace-pre-wrap text-ink-muted leading-relaxed max-h-80 overflow-y-auto">
-              {data.assignment?.brief ?? '—'}
+            <div className="max-h-80 overflow-y-auto">
+              <MarkdownBody>
+                {(data.assignment?.hideUntilStart ? data.assignment?.mainBrief : data.assignment?.brief) ?? '—'}
+              </MarkdownBody>
             </div>
           </Card>
         </div>
