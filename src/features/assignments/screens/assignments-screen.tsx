@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Badge, Button, Card, EmptyState, Modal, PageLoader } from '@shared/ui';
-import { Plus, ClipboardCheck, Clock, ChevronRight } from '@shared/ui/icons';
+import { Plus, ClipboardCheck, Clock, ChevronRight, Send } from '@shared/ui/icons';
 import { useToast } from '@shared/hooks/use-toast';
 import { useAssignments, useCreateAssignment } from '../api/use-assignments-api';
 import { AssignmentForm } from '../parts/assignment-form';
+import { BulkAssignModal } from '../parts/bulk-assign-modal';
 
 export const AssignmentsScreen = () => {
   const { data, isLoading } = useAssignments();
   const [open, setOpen] = useState(false);
+  const [bulkOpen, setBulkOpen] = useState(false);
   const create = useCreateAssignment();
   const navigate = useNavigate();
   const { push } = useToast();
@@ -22,9 +24,20 @@ export const AssignmentsScreen = () => {
             Define an assignment once. Assign it to candidates as needed.
           </p>
         </div>
-        <Button iconLeft={<Plus size={16} />} onClick={() => setOpen(true)}>
-          New assignment
-        </Button>
+        <div className="flex items-center gap-2">
+          {data && data.length > 0 && (
+            <Button
+              variant="secondary"
+              iconLeft={<Send size={14} />}
+              onClick={() => setBulkOpen(true)}
+            >
+              Bulk assign
+            </Button>
+          )}
+          <Button iconLeft={<Plus size={16} />} onClick={() => setOpen(true)}>
+            New assignment
+          </Button>
+        </div>
       </header>
 
       {isLoading ? (
@@ -81,6 +94,8 @@ export const AssignmentsScreen = () => {
           }}
         />
       </Modal>
+
+      <BulkAssignModal open={bulkOpen} onClose={() => setBulkOpen(false)} />
     </div>
   );
 };

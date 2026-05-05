@@ -81,3 +81,26 @@ export const useAssignToCandidate = (assignmentId: string) => {
     },
   });
 };
+
+export interface BulkAssignBody {
+  assignments: Array<{ assignmentId: string; deadline?: string | null }>;
+  candidateIds: string[];
+}
+
+export interface BulkAssignResult {
+  created: number;
+  skipped: number;
+  instances: AssignmentInstance[];
+}
+
+export const useBulkAssign = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: BulkAssignBody) =>
+      api<BulkAssignResult>('/assignments/bulk-assign', { method: 'POST', body }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['instances'] });
+      qc.invalidateQueries({ queryKey: ['candidates'] });
+    },
+  });
+};
