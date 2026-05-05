@@ -105,6 +105,27 @@ export const BulkAssignModal = ({ open, onClose }: Props) => {
     [pickedAssignments]
   );
 
+  const assignmentsAllChecked =
+    !!assignments &&
+    assignments.length > 0 &&
+    assignments.every((a) => pickedAssignments.get(a.id)?.picked);
+
+  const toggleAllAssignments = () => {
+    setPickedAssignments((prev) => {
+      const next = new Map(prev);
+      if (assignmentsAllChecked) {
+        // Clear all — but keep deadlines so re-checking restores them.
+        for (const [id, v] of next) next.set(id, { picked: false, deadline: v.deadline });
+      } else {
+        for (const a of assignments ?? []) {
+          const cur = next.get(a.id);
+          next.set(a.id, { picked: true, deadline: cur?.deadline ?? '' });
+        }
+      }
+      return next;
+    });
+  };
+
   const candidateCount = pickedCandidates.size;
   const assignmentCount = pickedAssignmentList.length;
   const totalSends = candidateCount * assignmentCount;
@@ -217,14 +238,25 @@ export const BulkAssignModal = ({ open, onClose }: Props) => {
               <span className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-ink-soft font-medium">
                 <ClipboardCheck size={13} /> Assignments
               </span>
-              <span className="text-xs text-ink-soft">Per-assignment deadlines</span>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-ink-soft">Per-assignment deadlines</span>
+                {assignments && assignments.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={toggleAllAssignments}
+                    className="text-xs ws-link"
+                  >
+                    {assignmentsAllChecked ? 'Clear all' : 'Select all'}
+                  </button>
+                )}
+              </div>
             </div>
             {!assignments || assignments.length === 0 ? (
               <p className="text-sm text-ink-soft italic">
                 No assignments yet. Create one first.
               </p>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2 h-[400px]">
                 {assignments.map((a) => {
                   const state = pickedAssignments.get(a.id);
                   const checked = state?.picked ?? false;
