@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Badge, Button, Card, CardHeader, EmptyState, PageLoader } from '@shared/ui';
 import {
@@ -6,10 +7,12 @@ import {
   Lock,
   Activity,
   ChevronRight,
+  Trash2,
 } from '@shared/ui/icons';
 import { useToast } from '@shared/hooks/use-toast';
 import { formatDate, formatDuration } from '@shared/utils/format-date';
 import { instanceStatusLabel, instanceStatusTone } from '@shared/utils/status-tone';
+import type { CandidateHistoryItem } from '@shared/types';
 import {
   useCandidate,
   useCandidateHistory,
@@ -18,6 +21,7 @@ import {
 } from '../api/use-candidates-api';
 import { AccessCodeDisplay } from '../parts/access-code-display';
 import { InviteLinkDisplay } from '../parts/invite-link-display';
+import { RemoveInstanceModal } from '@features/assignments/parts/remove-instance-modal';
 
 export const CandidateDetailScreen = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +30,7 @@ export const CandidateDetailScreen = () => {
   const regenerate = useRegenerateCode();
   const deactivate = useDeactivateCandidate();
   const { push } = useToast();
+  const [removeTarget, setRemoveTarget] = useState<CandidateHistoryItem | null>(null);
 
   if (isLoading || !candidate) return <PageLoader />;
 
@@ -137,6 +142,17 @@ export const CandidateDetailScreen = () => {
                     </div>
                   </div>
                 )}
+                {row.instance.status !== 'in_progress' && (
+                  <button
+                    type="button"
+                    onClick={() => setRemoveTarget(row)}
+                    className="p-2 rounded-lg text-ink-soft hover:text-danger hover:bg-rose-50 transition"
+                    aria-label="Remove assignment from candidate"
+                    title="Remove assignment from candidate"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
                 {row.session ? (
                   <Link
                     to={`/app/sessions/${row.session.id}`}
@@ -152,6 +168,23 @@ export const CandidateDetailScreen = () => {
           </div>
         )}
       </Card>
+
+      <RemoveInstanceModal
+        open={removeTarget !== null}
+        onClose={() => setRemoveTarget(null)}
+        instanceId={removeTarget?.instance.id ?? ''}
+        status={removeTarget?.instance.status ?? 'pending'}
+        assignmentTitle={removeTarget?.assignment?.title}
+        candidateName={candidate.name}
+        score={
+          removeTarget?.score
+            ? {
+                value: removeTarget.score.numericScore,
+                scoredAt: removeTarget.score.createdAt,
+              }
+            : null
+        }
+      />
     </div>
   );
 };

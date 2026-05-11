@@ -122,3 +122,33 @@ export const useUpdateInstanceDeadline = () => {
     },
   });
 };
+
+export interface DeleteInstanceResult {
+  ok: true;
+  deleted: {
+    instance: string;
+    session: string | null;
+    score: string | null;
+    blockedAttempts: number;
+  };
+}
+
+// Hard-remove an instance from a candidate. Backend gates: in_progress is
+// always blocked, scored requires force=true (which also removes the score).
+// Pending / submitted / closed flow through without force.
+export const useDeleteInstance = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, force }: { id: string; force?: boolean }) => {
+      const suffix = force ? '?force=true' : '';
+      return api<DeleteInstanceResult>(`/assignment-instances/${id}${suffix}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['instances'] });
+      qc.invalidateQueries({ queryKey: ['sessions'] });
+      qc.invalidateQueries({ queryKey: ['candidates'] });
+    },
+  });
+};

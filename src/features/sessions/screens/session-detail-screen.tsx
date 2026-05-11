@@ -1,5 +1,6 @@
-import { Link, useParams } from 'react-router-dom';
-import { Badge, Card, CardHeader, MarkdownBody, PageLoader } from '@shared/ui';
+import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Badge, Button, Card, CardHeader, MarkdownBody, PageLoader } from '@shared/ui';
 import {
   ArrowLeft,
   ShieldCheck,
@@ -9,16 +10,21 @@ import {
   Camera,
   Hourglass,
   CalendarClock,
+  Trash2,
 } from '@shared/ui/icons';
 import { formatDate, formatDuration } from '@shared/utils/format-date';
-import { useSession } from '../api/use-sessions-api';
+import { useSession, useSessionScore } from '../api/use-sessions-api';
 import { ScreenshotScrubber } from '../parts/screenshot-scrubber';
 import { ScorePanel } from '../parts/score-panel';
 import { BlockedAttemptsList } from '../parts/blocked-attempts-list';
+import { RemoveInstanceModal } from '@features/assignments/parts/remove-instance-modal';
 
 export const SessionDetailScreen = () => {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading } = useSession(id);
+  const { data: score } = useSessionScore(id);
+  const navigate = useNavigate();
+  const [removeOpen, setRemoveOpen] = useState(false);
 
   if (isLoading || !data) return <PageLoader />;
 
@@ -48,6 +54,19 @@ export const SessionDetailScreen = () => {
             </span>
           </div>
         </div>
+        {/* Removal is the destructive sibling of the score panel. We hide it
+            for in_progress (backend would reject anyway) — once a session
+            exists in this view, status is at least 'submitted'. */}
+        {data.instance && data.instance.status !== 'in_progress' && (
+          <Button
+            variant="ghost"
+            iconLeft={<Trash2 size={14} />}
+            onClick={() => setRemoveOpen(true)}
+            className="text-ink-soft hover:text-danger hover:bg-rose-50"
+          >
+            Remove
+          </Button>
+        )}
       </header>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -135,6 +154,23 @@ export const SessionDetailScreen = () => {
           </Card>
         </div>
       </div>
+
+      {data.instance && (
+        <RemoveInstanceModal
+          open={removeOpen}
+          onClose={() => setRemoveOpen(false)}
+          onDeleted={() => navigate('/app/instances')}
+          instanceId={data.instance.id}
+          status={data.instance.status}
+          assignmentTitle={data.assignment?.title}
+          candidateName={data.candidate?.name}
+          score={
+            score
+              ? { value: score.numericScore, scoredAt: score.createdAt }
+              : null
+          }
+        />
+      )}
     </div>
   );
 };

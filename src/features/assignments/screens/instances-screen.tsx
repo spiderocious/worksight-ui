@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Card, EmptyState, PageLoader, Select } from '@shared/ui';
-import { CalendarClock, ChevronRight, ListChecks } from '@shared/ui/icons';
+import { CalendarClock, ChevronRight, ListChecks, Trash2 } from '@shared/ui/icons';
 import { formatDate } from '@shared/utils/format-date';
 import { instanceStatusLabel, instanceStatusTone } from '@shared/utils/status-tone';
 import type { InstanceWithRelations } from '@shared/types';
 import { useInstances } from '../api/use-assignments-api';
 import { EditDeadlineModal } from '../parts/edit-deadline-modal';
+import { RemoveInstanceModal } from '../parts/remove-instance-modal';
 
 const statuses = ['pending', 'in_progress', 'submitted', 'scored'] as const;
 
@@ -34,11 +35,13 @@ export const InstancesScreen = () => {
   const [status, setStatus] = useState<string>('');
   const { data, isLoading } = useInstances({ status: status || undefined });
   const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<InstanceWithRelations | null>(null);
 
   // Stable handle for the modal's open state — modal stays mounted across
   // close transitions so its reset useEffect can run, but we drop the target
   // reference once closed.
   const editOpen = editTarget !== null;
+  const removeOpen = removeTarget !== null;
 
   const items = useMemo(() => data ?? [], [data]);
 
@@ -136,6 +139,18 @@ export const InstancesScreen = () => {
                     </button>
                   )}
 
+                  {i.status !== 'in_progress' && (
+                    <button
+                      type="button"
+                      onClick={() => setRemoveTarget(i)}
+                      className="p-2 rounded-lg text-ink-soft hover:text-danger hover:bg-rose-50 transition"
+                      aria-label="Remove assignment from candidate"
+                      title="Remove assignment from candidate"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+
                   <Link
                     to={`/app/candidates/${i.candidate?.id ?? ''}`}
                     className="text-ink-soft hover:text-ink shrink-0 p-1"
@@ -158,6 +173,15 @@ export const InstancesScreen = () => {
         status={editTarget?.status ?? 'pending'}
         assignmentTitle={editTarget?.assignmentTitle}
         candidateName={editTarget?.candidateName}
+      />
+
+      <RemoveInstanceModal
+        open={removeOpen}
+        onClose={() => setRemoveTarget(null)}
+        instanceId={removeTarget?.id ?? ''}
+        status={removeTarget?.status ?? 'pending'}
+        assignmentTitle={removeTarget?.assignment?.title}
+        candidateName={removeTarget?.candidate?.name}
       />
     </div>
   );

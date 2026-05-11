@@ -23,6 +23,7 @@ import {
 import { AssignmentForm } from '../parts/assignment-form';
 import { AssignToCandidateModal } from '../parts/assign-to-candidate-modal';
 import { EditDeadlineModal } from '../parts/edit-deadline-modal';
+import { RemoveInstanceModal } from '../parts/remove-instance-modal';
 import type { InstanceWithRelations } from '@shared/types';
 
 export const AssignmentDetailScreen = () => {
@@ -36,6 +37,7 @@ export const AssignmentDetailScreen = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
   const [deadlineTarget, setDeadlineTarget] = useState<InstanceWithRelations | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<InstanceWithRelations | null>(null);
 
   if (isLoading || !data || !id) return <PageLoader />;
 
@@ -141,6 +143,17 @@ export const AssignmentDetailScreen = () => {
                       <CalendarClock size={16} />
                     </button>
                   )}
+                  {i.status !== 'in_progress' && (
+                    <button
+                      type="button"
+                      onClick={() => setRemoveTarget(i)}
+                      className="p-2 rounded-lg text-ink-soft hover:text-danger hover:bg-rose-50 transition"
+                      aria-label="Remove assignment from candidate"
+                      title="Remove assignment from candidate"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                   {i.candidate && (
                     <Link
                       to={`/app/candidates/${i.candidate.id}`}
@@ -189,6 +202,15 @@ export const AssignmentDetailScreen = () => {
         status={deadlineTarget?.status ?? 'pending'}
         assignmentTitle={data.title}
         candidateName={deadlineTarget?.candidate?.name}
+      />
+
+      <RemoveInstanceModal
+        open={removeTarget !== null}
+        onClose={() => setRemoveTarget(null)}
+        instanceId={removeTarget?.id ?? ''}
+        status={removeTarget?.status ?? 'pending'}
+        assignmentTitle={data.title}
+        candidateName={removeTarget?.candidate?.name}
       />
     </div>
   );
