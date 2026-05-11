@@ -1,12 +1,31 @@
-import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Badge, Button, Card, EmptyState, MarkdownBody, Modal, PageLoader } from '@shared/ui';
-import { Plus, ClipboardCheck, Clock, ChevronRight, Send, Users } from '@shared/ui/icons';
-import { useToast } from '@shared/hooks/use-toast';
-import type { InstanceWithRelations } from '@shared/types';
-import { useAssignments, useCreateAssignment, useInstances } from '../api/use-assignments-api';
-import { AssignmentForm } from '../parts/assignment-form';
-import { BulkAssignModal } from '../parts/bulk-assign-modal';
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  MarkdownBody,
+  Modal,
+  PageLoader,
+} from "@shared/ui";
+import {
+  Plus,
+  ClipboardCheck,
+  Clock,
+  ChevronRight,
+  Send,
+  Users,
+} from "@shared/ui/icons";
+import { useToast } from "@shared/hooks/use-toast";
+import type { InstanceWithRelations } from "@shared/types";
+import {
+  useAssignments,
+  useCreateAssignment,
+  useInstances,
+} from "../api/use-assignments-api";
+import { AssignmentForm } from "../parts/assignment-form";
+import { BulkAssignModal } from "../parts/bulk-assign-modal";
 
 interface InstanceCounts {
   total: number;
@@ -14,13 +33,15 @@ interface InstanceCounts {
   scored: number;
 }
 
-const buildCounts = (instances: InstanceWithRelations[]): Map<string, InstanceCounts> => {
+const buildCounts = (
+  instances: InstanceWithRelations[],
+): Map<string, InstanceCounts> => {
   const m = new Map<string, InstanceCounts>();
   for (const i of instances) {
     const cur = m.get(i.assignmentId) ?? { total: 0, live: 0, scored: 0 };
     cur.total += 1;
-    if (i.status === 'in_progress' || i.status === 'submitted') cur.live += 1;
-    else if (i.status === 'scored') cur.scored += 1;
+    if (i.status === "in_progress" || i.status === "submitted") cur.live += 1;
+    else if (i.status === "scored") cur.scored += 1;
     m.set(i.assignmentId, cur);
   }
   return m;
@@ -29,7 +50,10 @@ const buildCounts = (instances: InstanceWithRelations[]): Map<string, InstanceCo
 export const AssignmentsScreen = () => {
   const { data, isLoading } = useAssignments();
   const { data: instances } = useInstances();
-  const countsByAssignment = useMemo(() => buildCounts(instances ?? []), [instances]);
+  const countsByAssignment = useMemo(
+    () => buildCounts(instances ?? []),
+    [instances],
+  );
   const [open, setOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const create = useCreateAssignment();
@@ -69,7 +93,14 @@ export const AssignmentsScreen = () => {
             icon={<ClipboardCheck size={36} strokeWidth={1.5} />}
             title="No assignments yet"
             description="Create your first assignment template — title, brief, duration, and how the candidate should submit."
-            action={<Button iconLeft={<Plus size={16} />} onClick={() => setOpen(true)}>New assignment</Button>}
+            action={
+              <Button
+                iconLeft={<Plus size={16} />}
+                onClick={() => setOpen(true)}
+              >
+                New assignment
+              </Button>
+            }
           />
         </Card>
       ) : (
@@ -77,41 +108,47 @@ export const AssignmentsScreen = () => {
           {data.map((a) => {
             const counts = countsByAssignment.get(a.id);
             return (
-            <Link
-              to={`/app/assignments/${a.id}`}
-              key={a.id}
-              className="block ws-card p-5 hover:shadow-lift transition-shadow"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <h3 className="text-base font-semibold text-ink truncate">{a.title}</h3>
+              <Link
+                to={`/app/assignments/${a.id}`}
+                key={a.id}
+                className="block ws-card p-5 hover:shadow-lift transition-shadow"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    <h3 className="text-base font-semibold text-ink truncate">
+                      {a.title}
+                    </h3>
 
-                  <p className="text-sm text-ink-muted line-clamp-1 mt-1">
+                    <p className="text-sm text-ink-muted line-clamp-1 mt-1">
                       <MarkdownBody>{a.brief}</MarkdownBody>
-                  </p>
-                  <div className="flex items-center gap-3 mt-3 flex-wrap">
-                    <Badge tone="brand">
-                      <Clock size={11} /> {a.durationMinutes} minutes
-                    </Badge>
-                    <Badge tone="neutral">{a.submissionType}</Badge>
-                    {counts && counts.total > 0 && (
-                      <Badge tone={counts.live > 0 ? 'amber' : 'neutral'}>
-                        <Users size={11} /> {counts.total} assigned
-                        {counts.live > 0 && ` · ${counts.live} live`}
+                    </p>
+                    <div className="flex items-center gap-3 mt-3 flex-wrap">
+                      <Badge tone="brand">
+                        <Clock size={11} /> {a.durationMinutes} minutes
                       </Badge>
-                    )}
+                      <Badge tone="neutral">{a.submissionType}</Badge>
+                      {counts && counts.total > 0 && (
+                        <Badge tone={counts.live > 0 ? "amber" : "neutral"}>
+                          <Users size={11} /> {counts.total} assigned
+                          {counts.live > 0 && ` · ${counts.live} live`}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
+                  <ChevronRight size={20} className="text-ink-soft shrink-0" />
                 </div>
-                <ChevronRight size={20} className="text-ink-soft shrink-0" />
-              </div>
-            </Link>
+              </Link>
             );
-          })
-          ))}
+          })}
         </div>
       )}
 
-      <Modal open={open} onClose={() => setOpen(false)} title="New assignment" width="lg">
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="New assignment"
+        width="lg"
+      >
         <AssignmentForm
           submitLabel="Create assignment"
           loading={create.isPending}
@@ -120,10 +157,13 @@ export const AssignmentsScreen = () => {
             try {
               const created = await create.mutateAsync(body);
               setOpen(false);
-              push('Assignment created', 'success');
+              push("Assignment created", "success");
               navigate(`/app/assignments/${created.id}`);
             } catch (err) {
-              push(err instanceof Error ? err.message : 'Could not create', 'error');
+              push(
+                err instanceof Error ? err.message : "Could not create",
+                "error",
+              );
             }
           }}
         />
