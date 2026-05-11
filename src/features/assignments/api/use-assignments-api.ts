@@ -104,3 +104,21 @@ export const useBulkAssign = () => {
     },
   });
 };
+
+// Edit the deadline on an existing instance. `null` clears the deadline
+// (open-ended); a real ISO string sets/extends it. The backend rejects
+// past deadlines and terminal-status instances.
+export const useUpdateInstanceDeadline = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, deadline }: { id: string; deadline: string | null }) =>
+      api<AssignmentInstance>(`/assignment-instances/${id}/deadline`, {
+        method: 'PATCH',
+        body: { deadline },
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['instances'] });
+      qc.invalidateQueries({ queryKey: ['sessions'] });
+    },
+  });
+};

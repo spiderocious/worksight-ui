@@ -8,6 +8,7 @@ import {
   ExternalLink,
   Camera,
   Hourglass,
+  CalendarClock,
 } from '@shared/ui/icons';
 import { formatDate, formatDuration } from '@shared/utils/format-date';
 import { useSession } from '../api/use-sessions-api';
@@ -49,13 +50,18 @@ export const SessionDetailScreen = () => {
         </div>
       </header>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <MetaCard label="Started" value={formatDate(data.startedAt)} icon={<Clock size={14} />} />
         <MetaCard label="Ended" value={formatDate(data.endedAt)} icon={<Clock size={14} />} />
         <MetaCard
           label="Duration"
           value={formatDuration(data.durationSeconds)}
           icon={<Hourglass size={14} />}
+        />
+        <MetaCard
+          label="Deadline"
+          value={data.instance?.deadline ? formatDate(data.instance.deadline) : 'No deadline'}
+          icon={<CalendarClock size={14} />}
         />
       </div>
 

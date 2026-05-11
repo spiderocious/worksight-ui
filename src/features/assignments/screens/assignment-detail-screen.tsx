@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Badge, Button, Card, CardHeader, EmptyState, MarkdownBody, Modal, PageLoader } from '@shared/ui';
 import {
   ArrowLeft,
+  CalendarClock,
   ChevronRight,
   Clock,
   Pencil,
@@ -21,6 +22,8 @@ import {
 } from '../api/use-assignments-api';
 import { AssignmentForm } from '../parts/assignment-form';
 import { AssignToCandidateModal } from '../parts/assign-to-candidate-modal';
+import { EditDeadlineModal } from '../parts/edit-deadline-modal';
+import type { InstanceWithRelations } from '@shared/types';
 
 export const AssignmentDetailScreen = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,6 +35,7 @@ export const AssignmentDetailScreen = () => {
   const { push } = useToast();
   const [editOpen, setEditOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
+  const [deadlineTarget, setDeadlineTarget] = useState<InstanceWithRelations | null>(null);
 
   if (isLoading || !data || !id) return <PageLoader />;
 
@@ -105,28 +109,49 @@ export const AssignmentDetailScreen = () => {
           />
         ) : (
           <div className="divide-y divide-line">
-            {myInstances.map((i) => (
-              <div key={i.id} className="py-3 flex items-center gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-ink truncate">
-                      {i.candidate?.name ?? 'Candidate'}
-                    </span>
-                    <Badge tone={instanceStatusTone(i.status)}>{instanceStatusLabel(i.status)}</Badge>
+            {myInstances.map((i) => {
+              const editable = i.status !== 'scored' && i.status !== 'closed';
+              return (
+                <div key={i.id} className="py-3 flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-ink truncate">
+                        {i.candidate?.name ?? 'Candidate'}
+                      </span>
+                      <Badge tone={instanceStatusTone(i.status)}>{instanceStatusLabel(i.status)}</Badge>
+                    </div>
+                    <p className="text-xs text-ink-soft mt-0.5">{i.candidate?.email}</p>
                   </div>
-                  <p className="text-xs text-ink-soft mt-0.5">{i.candidate?.email}</p>
+                  <div className="hidden sm:flex flex-col items-end shrink-0 min-w-[9rem]">
+                    <span className="text-[10px] uppercase tracking-wider text-ink-soft">
+                      {i.deadline ? 'Deadline' : 'Assigned'}
+                    </span>
+                    <span className="text-xs text-ink-soft">
+                      {i.deadline ? formatDate(i.deadline) : formatDate(i.createdAt)}
+                    </span>
+                  </div>
+                  {editable && (
+                    <button
+                      type="button"
+                      onClick={() => setDeadlineTarget(i)}
+                      className="p-2 rounded-lg text-ink-soft hover:text-ink hover:bg-surface-sunken transition"
+                      aria-label="Edit deadline"
+                      title="Edit deadline"
+                    >
+                      <CalendarClock size={16} />
+                    </button>
+                  )}
+                  {i.candidate && (
+                    <Link
+                      to={`/app/candidates/${i.candidate.id}`}
+                      className="text-ink-soft hover:text-brand-700 p-1 rounded hover:bg-surface-sunken"
+                    >
+                      <ChevronRight size={18} />
+                    </Link>
+                  )}
                 </div>
-                <span className="text-xs text-ink-soft">{formatDate(i.createdAt)}</span>
-                {i.candidate && (
-                  <Link
-                    to={`/app/candidates/${i.candidate.id}`}
-                    className="text-ink-soft hover:text-brand-700 p-1 rounded hover:bg-surface-sunken"
-                  >
-                    <ChevronRight size={18} />
-                  </Link>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </Card>
@@ -154,6 +179,16 @@ export const AssignmentDetailScreen = () => {
         onClose={() => setAssignOpen(false)}
         assignmentId={id}
         assignmentTitle={data.title}
+      />
+
+      <EditDeadlineModal
+        open={deadlineTarget !== null}
+        onClose={() => setDeadlineTarget(null)}
+        instanceId={deadlineTarget?.id ?? ''}
+        currentDeadline={deadlineTarget?.deadline ?? null}
+        status={deadlineTarget?.status ?? 'pending'}
+        assignmentTitle={data.title}
+        candidateName={deadlineTarget?.candidate?.name}
       />
     </div>
   );

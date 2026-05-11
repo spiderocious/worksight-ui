@@ -43,4 +43,5 @@ export {
   CircleDot,
   Camera,
   ExternalLink,
+  CalendarClock,
 } from 'lucide-react';
