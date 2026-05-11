@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Button, Input, Select, Textarea } from '@shared/ui';
 import { Eye, EyeOff } from '@shared/ui/icons';
 import type { Assignment, SubmissionType } from '@shared/types';
+import { EditBlastRadiusBanner } from './edit-blast-radius-banner';
 
 interface SubmitBody {
   title: string;
@@ -67,6 +68,7 @@ export const AssignmentForm = ({ initial, submitLabel, loading, onSubmit, onCanc
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {initial?.id && <EditBlastRadiusBanner assignmentId={initial.id} />}
       <Input
         label={titleLabel}
         value={title}

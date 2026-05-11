@@ -1,14 +1,35 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Badge, Button, Card, EmptyState, MarkdownBody, Modal, PageLoader } from '@shared/ui';
-import { Plus, ClipboardCheck, Clock, ChevronRight, Send } from '@shared/ui/icons';
+import { Plus, ClipboardCheck, Clock, ChevronRight, Send, Users } from '@shared/ui/icons';
 import { useToast } from '@shared/hooks/use-toast';
-import { useAssignments, useCreateAssignment } from '../api/use-assignments-api';
+import type { InstanceWithRelations } from '@shared/types';
+import { useAssignments, useCreateAssignment, useInstances } from '../api/use-assignments-api';
 import { AssignmentForm } from '../parts/assignment-form';
 import { BulkAssignModal } from '../parts/bulk-assign-modal';
 
+interface InstanceCounts {
+  total: number;
+  live: number; // in_progress + submitted — the people actively affected by edits
+  scored: number;
+}
+
+const buildCounts = (instances: InstanceWithRelations[]): Map<string, InstanceCounts> => {
+  const m = new Map<string, InstanceCounts>();
+  for (const i of instances) {
+    const cur = m.get(i.assignmentId) ?? { total: 0, live: 0, scored: 0 };
+    cur.total += 1;
+    if (i.status === 'in_progress' || i.status === 'submitted') cur.live += 1;
+    else if (i.status === 'scored') cur.scored += 1;
+    m.set(i.assignmentId, cur);
+  }
+  return m;
+};
+
 export const AssignmentsScreen = () => {
   const { data, isLoading } = useAssignments();
+  const { data: instances } = useInstances();
+  const countsByAssignment = useMemo(() => buildCounts(instances ?? []), [instances]);
   const [open, setOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const create = useCreateAssignment();
@@ -53,7 +74,9 @@ export const AssignmentsScreen = () => {
         </Card>
       ) : (
         <div className="space-y-3">
-          {data.map((a) => (
+          {data.map((a) => {
+            const counts = countsByAssignment.get(a.id);
+            return (
             <Link
               to={`/app/assignments/${a.id}`}
               key={a.id}
@@ -62,20 +85,28 @@ export const AssignmentsScreen = () => {
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   <h3 className="text-base font-semibold text-ink truncate">{a.title}</h3>
-                
+
                   <p className="text-sm text-ink-muted line-clamp-1 mt-1">
                       <MarkdownBody>{a.brief}</MarkdownBody>
                   </p>
-                  <div className="flex items-center gap-3 mt-3">
+                  <div className="flex items-center gap-3 mt-3 flex-wrap">
                     <Badge tone="brand">
                       <Clock size={11} /> {a.durationMinutes} minutes
                     </Badge>
                     <Badge tone="neutral">{a.submissionType}</Badge>
+                    {counts && counts.total > 0 && (
+                      <Badge tone={counts.live > 0 ? 'amber' : 'neutral'}>
+                        <Users size={11} /> {counts.total} assigned
+                        {counts.live > 0 && ` · ${counts.live} live`}
+                      </Badge>
+                    )}
                   </div>
                 </div>
                 <ChevronRight size={20} className="text-ink-soft shrink-0" />
               </div>
             </Link>
+            );
+          })
           ))}
         </div>
       )}
